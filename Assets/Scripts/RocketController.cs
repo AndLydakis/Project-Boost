@@ -7,15 +7,22 @@ public class RocketController : MonoBehaviour
 {
     // Start is called before the first frame update
 
-    Rigidbody starboardBooster;
-    Rigidbody portBooster;
     Rigidbody rocket;
     AudioSource thrusterAudio;
 
     [SerializeField] float rotationVel = 250.0f;
     [SerializeField] float thrustVel = 50.0f;
     [SerializeField] float mass = 0.1f;
+    [SerializeField] float levelLoadDelay = 0.5f;
     [SerializeField] bool debug = true;
+
+    [SerializeField] AudioClip mainEngine;
+    [SerializeField] AudioClip levelComplete;
+    [SerializeField] AudioClip death;
+
+    [SerializeField] ParticleSystem mainEngineParticles;
+    [SerializeField] ParticleSystem successParticles;
+    [SerializeField] ParticleSystem deathParticles;
 
     enum State { Alive, Dying, Transcending };
     State state = State.Alive;
@@ -29,16 +36,19 @@ public class RocketController : MonoBehaviour
     // Update is called once per frame
     void Update() {
         if (state != State.Alive) {
-            thrusterAudio.Stop();
             return;
         }
         bool thrusterOn = Thrust() | Rotate();
         if (thrusterOn && !thrusterAudio.isPlaying) {
-            thrusterAudio.Play();
+            print("Starting Engine Audio and Particles");
+            thrusterAudio.PlayOneShot(mainEngine);
+            mainEngineParticles.Play();
 
         }
         else if (!thrusterOn && thrusterAudio.isPlaying) {
+            print("Stopping Engine Audio and Particles");
             thrusterAudio.Stop();
+            mainEngineParticles.Stop();
         }
     }
 
@@ -53,20 +63,18 @@ public class RocketController : MonoBehaviour
 
 
     void OnCollisionEnter(Collision collision) {
+        if (state != State.Alive) {
+            return;
+        }
         switch (collision.gameObject.tag) {
             case "Death":
                 print("Collided with obstacle, game over");
-                if (!debug) {
-                    state = State.Dying;
-                    Invoke("LoadFirstLevel", 0.5f);
-                }
+                HandleDeath();
                 break;
             case "Friendly":
                 break;
             case "Landing":
-                print("Landing Pad Reached");
-                state = State.Transcending;
-                Invoke("LoadNextLeve", 0.5f); //TODO parametrize level loading
+                HandleLevelEnd();
                 break;
             default:
                 break;
@@ -93,5 +101,25 @@ public class RocketController : MonoBehaviour
             return true;
         }
         return false;
+    }
+
+    private void HandleDeath() {
+        if (!debug) {
+            print("Handle Death");
+            state = State.Dying;
+            thrusterAudio.Stop();
+            thrusterAudio.PlayOneShot(death);
+            deathParticles.Play();
+            Invoke("LoadFirstLevel", levelLoadDelay);
+        }
+    }
+
+    private void HandleLevelEnd() {
+        print("Landing Pad Reached");
+        thrusterAudio.Stop();
+        thrusterAudio.PlayOneShot(levelComplete);
+        successParticles.Play();
+        state = State.Transcending;
+        Invoke("LoadNextLeve", levelLoadDelay); //TODO parametrize level loading
     }
 }
