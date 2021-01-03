@@ -15,6 +15,7 @@ public class RocketController : MonoBehaviour
     [SerializeField] float mass = 0.1f;
     [SerializeField] float levelLoadDelay = 0.5f;
     [SerializeField] bool debug = true;
+    [SerializeField] bool collisionsOn = true;
 
     [SerializeField] AudioClip mainEngine;
     [SerializeField] AudioClip levelComplete;
@@ -35,6 +36,8 @@ public class RocketController : MonoBehaviour
 
     // Update is called once per frame
     void Update() {
+        if (Debug.isDebugBuild) CheckDebugInputs();
+
         if (state != State.Alive) {
             return;
         }
@@ -53,7 +56,19 @@ public class RocketController : MonoBehaviour
     }
 
     private void LoadFirstLevel() {
-        SceneManager.LoadScene(0);
+        if (PlayerStats.Instance.PermaDeath) {
+            SceneManager.LoadScene(0);
+            return;
+        }
+
+        if ((--PlayerStats.Instance.Lives) <= 0) {
+            SceneManager.LoadScene(0);
+            return;
+        }
+        else {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            return;
+        }
     }
 
     private void LoadNextLeve() {
@@ -61,8 +76,15 @@ public class RocketController : MonoBehaviour
         SceneManager.LoadScene(y + 1);
     }
 
+    private void CheckDebugInputs() {
+        if (Input.GetKeyDown(KeyCode.C)) collisionsOn = !collisionsOn;
+        else if (Input.GetKeyDown(KeyCode.L)) {
+            HandleLevelEnd();
+        }
+    }
 
     void OnCollisionEnter(Collision collision) {
+        if (!collisionsOn) return;
         if (state != State.Alive) {
             return;
         }

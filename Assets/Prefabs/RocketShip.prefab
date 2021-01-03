@@ -533,7 +533,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rotationVel: 250
-  thrustVel: 100
+  thrustVel: 150
   mass: 0.1
   levelLoadDelay: 0.5
   debug: 0
