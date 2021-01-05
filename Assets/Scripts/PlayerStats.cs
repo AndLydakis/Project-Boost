@@ -8,6 +8,7 @@ public class PlayerStats : MonoBehaviour
 
     public int Lives { get; set; }
     public float Time { get; set; }
+    public string Name { get; set; }
     public bool PermaDeath { get; set; }
 
 
@@ -18,6 +19,7 @@ public class PlayerStats : MonoBehaviour
         else {
             print("Initializing singleton");
             Instance = this;
+            Instance.Name = "AAA";
             DontDestroyOnLoad(gameObject);
         }
     }

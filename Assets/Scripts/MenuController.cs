@@ -29,14 +29,12 @@ public class MenuController : MonoBehaviour
 
     void HandleLives() {
         if (Input.GetKeyDown(KeyCode.DownArrow)) {
-            print("New State");
             newGameText.text = "* New Game";
             livesText.text = " " + livesText.text.Substring(1);
             curState = State.NewGame;
             return;
         }
         else if (Input.GetKeyDown(KeyCode.UpArrow)) {
-            print("Perma");
             permaText.text = "*  Permadeath: " + (permaDeath ? "[ON]" : "[OFF]");
             livesText.text = " " + livesText.text.Substring(1);
             curState = State.Perma;
@@ -54,13 +52,11 @@ public class MenuController : MonoBehaviour
 
     void HandlePermaDeath() {
         if (Input.GetKeyDown(KeyCode.DownArrow)) {
-            print("Lives");
             permaText.text = "  Permadeath: " + (permaDeath ? "[ON]" : "[OFF]");
             livesText.text = "*  Lives: [" + numLives + "]";
             curState = State.Lives;
         }
         else if (Input.GetKeyDown(KeyCode.UpArrow)) {
-            print("New Game");
             permaText.text = "  Permadeath: " + (permaDeath ? "[ON]" : "[OFF]");
             newGameText.text = "* New Game";
             curState = State.NewGame;
@@ -74,13 +70,11 @@ public class MenuController : MonoBehaviour
 
     void HandleNewGame() {
         if (Input.GetKeyDown(KeyCode.DownArrow)) {
-            print("Perma");
             newGameText.text = "  New Game";
             permaText.text = "* Permadeath: " + (permaDeath ? "[ON]" : "[OFF]");
             curState = State.Perma;
         }
         else if (Input.GetKeyDown(KeyCode.UpArrow)) {
-            print("Lives");
             newGameText.text = "  New Game";
             livesText.text = "*  Lives: [" + numLives + "]";
             curState = State.Lives;

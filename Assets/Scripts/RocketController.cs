@@ -43,13 +43,11 @@ public class RocketController : MonoBehaviour
         }
         bool thrusterOn = Thrust() | Rotate();
         if (thrusterOn && !thrusterAudio.isPlaying) {
-            print("Starting Engine Audio and Particles");
             thrusterAudio.PlayOneShot(mainEngine);
             mainEngineParticles.Play();
 
         }
         else if (!thrusterOn && thrusterAudio.isPlaying) {
-            print("Stopping Engine Audio and Particles");
             thrusterAudio.Stop();
             mainEngineParticles.Stop();
         }
@@ -90,7 +88,6 @@ public class RocketController : MonoBehaviour
         }
         switch (collision.gameObject.tag) {
             case "Death":
-                print("Collided with obstacle, game over");
                 HandleDeath();
                 break;
             case "Friendly":
@@ -127,7 +124,6 @@ public class RocketController : MonoBehaviour
 
     private void HandleDeath() {
         if (!debug) {
-            print("Handle Death");
             state = State.Dying;
             thrusterAudio.Stop();
             thrusterAudio.PlayOneShot(death);
@@ -137,7 +133,6 @@ public class RocketController : MonoBehaviour
     }
 
     private void HandleLevelEnd() {
-        print("Landing Pad Reached");
         thrusterAudio.Stop();
         thrusterAudio.PlayOneShot(levelComplete);
         successParticles.Play();
